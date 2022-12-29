@@ -5,11 +5,13 @@ const wordProgress = document.querySelector('.word-in-progress');
 const remaining = document.querySelector('.remaining');
 const remainingDisplay = document.querySelector('span');
 const messages = document.querySelector('.message');
-const hiddenButton = document.querySelector('.play-again hide');
+const hiddenButton = document.querySelector('.play-again');
 
 let word = 'magnolia';
-const guessedLetters = [];
+let guessedLetters = [];
 let remainingGuesses = 8
+
+
 const getWord = async function () {
     const res = await fetch(
         "https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt"
@@ -104,6 +106,7 @@ const guessCount = function (guess) {
 
     if (remainingGuesses === 0) {
         messages.innerHTML = `Womp Womp! GAME OVER! The word was <span class="highlight">${upWord}</span>!`;
+        startOver();
     } else if (remainingGuesses === 1) {
         remainingDisplay.innerText = `${remainingGuesses} guess`;
     } else {
@@ -115,6 +118,30 @@ const checkWin = function () {
     if (word.toUpperCase() === wordProgress.innerText) {
         messages.classList.add('win');
         messages.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+
+        startOver();
     }
 }
 
+const startOver = function () {
+    button.classList.add('hide');
+    remaining.classList.add('hide');
+    guessedLettersElement.classList.add('hide');
+    hiddenButton.classList.remove('hide');
+}
+
+hiddenButton.addEventListener('click', function () {
+    messages.classList.remove("win");
+    guessedLetters = [];
+    remainingGuesses = 8;
+    remainingDisplay.innerText = `${remainingGuesses} guesses`
+    guessedLettersElement.innerHTML = '';
+    messages.innerText = '';
+
+    getWord();
+
+    button.classList.remove('hide');
+    hiddenButton.classList.add('hide');
+    remaining.classList.remove('hide');
+    guessedLettersElement.remove('hide');
+});
